@@ -1,0 +1,1 @@
+package com.example.quiz.repo; import com.example.quiz.model.Submission; import org.springframework.data.jpa.repository.JpaRepository; public interface SubmissionRepository extends JpaRepository<Submission, Long> {}

@@ -1,0 +1,1 @@
+package com.example.quiz.model; public enum QuestionType { MCQ, TRUE_FALSE, SHORT_TEXT }
