@@ -99,7 +99,9 @@ These may be added later.
 ---
 
 ## 4. Database Schema
-
+  **DDL auto-generation**
+  spring.jpa.hibernate.ddl-auto=update in thee application.properties makes Hibernate automatically create
+   or update database tables, schema, and relationships based on your entity classes defined.
 ### Entities
 
 #### Quiz
@@ -202,12 +204,10 @@ These may be added later.
 
 ## 7. Future Improvements (Optional)
 
-- Add authentication for admin routes.
 - Add publish/draft mode for quizzes.
 - Add pagination and quiz search.
 - Add exporting quiz results.
 - Add timed quizzes or attempt limits.
-- Add proper DTO classes instead of Map responses.
 
 ---
 
