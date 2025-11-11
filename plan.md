@@ -223,3 +223,10 @@ The system is:
 - Frontend is simple but works well for admin + public flows
 
 ---
+### 9. AI Assistance Disclosure
+
+This project was developed with the assistance of GitHub Copilot as part of the Software Engineers Assignment (AI-assisted) requirement.
+Copilot was used to generate boilerplate code, suggest improvements, and accelerate development of repetitive components such as controllers, 
+DTOs, repository interfaces, and basic frontend scripts.
+
+All key design decisions and final code were manually reviewed and verified for correctness and alignment with the assignment requirements.
