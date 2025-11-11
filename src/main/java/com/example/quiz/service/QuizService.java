@@ -28,13 +28,17 @@ public class QuizService {
    if(q.getType()==QuestionType.MCQ){ m.put("choices", q.getChoices().stream().map(c->{ Map<String,Object> cm=new LinkedHashMap<>(); cm.put("id",c.getId()); cm.put("text",c.getText()); cm.put("correct",c.isCorrect()); return cm;}).toList()); }
    return m; }).toList(); dto.put("questions",qs); return dto; }
  public List<Map<String,Object>> publicQuizzes() {
-  return quizRepo.findAll().stream().map(q -> {
-   Map<String,Object> m = new LinkedHashMap<>();
-   m.put("id", q.getId());
-   m.put("title", q.getTitle());
-   return m;
-  }).toList();
+  return quizRepo.findAll().stream()
+          .filter(q -> q.getQuestions() != null && !q.getQuestions().isEmpty())  // ✅ Only quizzes WITH questions
+          .map(q -> {
+           Map<String,Object> m = new LinkedHashMap<>();
+           m.put("id", q.getId());
+           m.put("title", q.getTitle());
+           return m;
+          })
+          .toList();
  }
+
  public Map<String,Object> publicQuiz(Long id){
   Quiz quiz=getQuiz(id); Map<String,Object> dto=new LinkedHashMap<>(); dto.put("id",quiz.getId()); dto.put("title",quiz.getTitle());
   List<Map<String,Object>> qs=quiz.getQuestions().stream().map(q->{ Map<String,Object> m=new LinkedHashMap<>(); m.put("id",q.getId()); m.put("type",q.getType().name()); m.put("text",q.getText());
