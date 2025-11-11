@@ -1,16 +1,21 @@
 # Quiz Management System — Plan & Architecture
 
-This document outlines the assumptions, scope, and high-level design decisions for the Quiz Management System built using **Spring Boot (Java 17)**, **MySQL**, **HTML/JS frontend**, and a clean Admin/Public separation.  
-The goal is to keep the implementation simple, production-ready, and easy to extend later (e.g., authentication, publishing workflow, reporting).
+This document outlines the assumptions, scope, and high-level design decisions for the Quiz Management System built
+using **Spring Boot (Java 17)**, **MySQL**, **HTML/JS frontend**, and a clean Admin/Public separation.  
+The goal is to keep the implementation simple, production-ready, and easy to extend later (e.g., authentication,
+publishing workflow, reporting).
 
 ---
 
 ## 1. Assumptions
 
 1. The system has **two types of users**:
-    - **Admin** — can create, edit, and manage quizzes, questions, and choices.
-    - **Public Users** — can view available quizzes and submit answers.
-    - No authentication has been implemented yet; admin access is open.
+   - **Admin Users**
+     - Admin access requires login.
+     - Admin credentials are stored in application.properties (username/password).
+     - Authenticated Admin can create, edit, delete and manage quizzes, questions, and choices.
+
+- **Public Users** — can view available quizzes and submit answers.
 
 2. A quiz is only visible publicly **if it contains at least one question**.
 
@@ -31,6 +36,7 @@ The goal is to keep the implementation simple, production-ready, and easy to ext
 ## 2. Project Scope
 
 ### Admin Features
+
 - Create quiz with a title.
 - View all quizzes.
 - Rename or delete quizzes.
@@ -45,16 +51,19 @@ The goal is to keep the implementation simple, production-ready, and easy to ext
 - Auto-cleanup when items are removed.
 
 ### Public Features
+
 - List all quizzes that have at least one question.
 - View quiz details and questions.
 - Submit answers.
 - Receive score and question-level feedback.
 
 ### Out of Scope (for now)
-- Authentication / login.
+
+- API Documentation (Swagger / OpenAPI): for easier API testing
 - Quiz publish/unpublish workflow.
 - Timer, paging, or advanced UI components.
 - Statistics/reporting dashboards.
+- Progress bar on quiz-taking page
 - User accounts or quiz attempts history.
 
 These may be added later.
@@ -64,6 +73,7 @@ These may be added later.
 ## 3. High-Level Architecture
 
 ### Layers
+
 1. **Controller Layer**
     - `AdminQuizController` → `/api/admin/**`
     - `PublicQuizController` → `/api/public/**`
@@ -93,58 +103,64 @@ These may be added later.
 ### Entities
 
 #### Quiz
-| Field | Type | Notes |
-|-------|-------|--------|
-| id | BIGINT | PK |
-| title | VARCHAR | Not blank |
-| questions | One-to-many | Cascade + orphanRemoval |
+
+| Field       | Type        | Notes                   |
+|-------------|-------------|-------------------------|
+| id          | BIGINT      | PK                      |
+| title       | VARCHAR     | Not blank               |
+| questions   | One-to-many | Cascade + orphanRemoval |
 | submissions | One-to-many | Cascade + orphanRemoval |
 
 #### Question
-| Field | Type | Notes |
-|-------|-------|--------|
-| id | BIGINT | PK |
-| quiz_id | BIGINT | FK to Quiz |
-| type | ENUM (MCQ, TRUE_FALSE, SHORT_TEXT) |
-| text | VARCHAR | Required |
-| correctTrueFalse | BOOLEAN | For TRUE_FALSE questions |
-| correctShortText | VARCHAR | For text answers |
-| choices | One-to-many | Cascade + orphanRemoval |
-| answers | One-to-many | Cascade + orphanRemoval |
+
+| Field            | Type                               | Notes                    |
+|------------------|------------------------------------|--------------------------|
+| id               | BIGINT                             | PK                       |
+| quiz_id          | BIGINT                             | FK to Quiz               |
+| type             | ENUM (MCQ, TRUE_FALSE, SHORT_TEXT) |
+| text             | VARCHAR                            | Required                 |
+| correctTrueFalse | BOOLEAN                            | For TRUE_FALSE questions |
+| correctShortText | VARCHAR                            | For text answers         |
+| choices          | One-to-many                        | Cascade + orphanRemoval  |
+| answers          | One-to-many                        | Cascade + orphanRemoval  |
 
 #### Choice
-| Field | Type | Notes |
-|-------|-------|--------|
-| id | BIGINT | PK |
-| question_id | BIGINT | FK |
-| text | VARCHAR | Answer text |
-| correct | BOOLEAN | Marks the correct option |
+
+| Field       | Type    | Notes                    |
+|-------------|---------|--------------------------|
+| id          | BIGINT  | PK                       |
+| question_id | BIGINT  | FK                       |
+| text        | VARCHAR | Answer text              |
+| correct     | BOOLEAN | Marks the correct option |
 
 #### Submission
-| Field | Type | Notes |
-|-------|-------|--------|
-| id | BIGINT | PK |
-| quiz_id | BIGINT | FK |
-| score | INT | Computed |
-| total | INT | Number of questions in quiz |
-| answers | One-to-many | Cascade + orphanRemoval |
+
+| Field   | Type        | Notes                       |
+|---------|-------------|-----------------------------|
+| id      | BIGINT      | PK                          |
+| quiz_id | BIGINT      | FK                          |
+| score   | INT         | Computed                    |
+| total   | INT         | Number of questions in quiz |
+| answers | One-to-many | Cascade + orphanRemoval     |
 
 #### Answer
-| Field | Type | Notes |
-|-------|-------|--------|
-| id | BIGINT | PK |
-| submission_id | BIGINT | FK |
-| question_id | BIGINT | FK |
-| chosenChoiceId | BIGINT | MCQ choice ID |
-| chosenTrueFalse | BOOLEAN | |
-| shortText | VARCHAR | |
-| correct | BOOLEAN | Computed |
+
+| Field           | Type    | Notes         |
+|-----------------|---------|---------------|
+| id              | BIGINT  | PK            |
+| submission_id   | BIGINT  | FK            |
+| question_id     | BIGINT  | FK            |
+| chosenChoiceId  | BIGINT  | MCQ choice ID |
+| chosenTrueFalse | BOOLEAN |               |
+| shortText       | VARCHAR |               |
+| correct         | BOOLEAN | Computed      |
 
 ---
 
 ## 5. API Overview
 
 ### Admin APIs (`/api/admin/...`)
+
 - `GET /quizzes`
 - `POST /quizzes`
 - `GET /quizzes/{id}`
@@ -158,6 +174,7 @@ These may be added later.
 - `DELETE /choices/{id}`
 
 ### Public APIs (`/api/public/...`)
+
 - `GET /quizzes`
 - `GET /quizzes/{id}`
 - `POST /quizzes/{id}/submit`

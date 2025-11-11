@@ -1,11 +1,13 @@
 package com.example.quiz.controller;
 
-import com.example.quiz.model.QuestionType;
+import com.example.quiz.config.AdminConfig;
+import com.example.quiz.dto.*;
 import com.example.quiz.service.QuizService;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -13,106 +15,129 @@ import java.util.Map;
 public class AdminQuizController {
 
     private final QuizService svc;
+    private final AdminConfig adminConfig;
 
-    public AdminQuizController(QuizService svc) {
+    public AdminQuizController(QuizService svc, AdminConfig  adminConfig)
+    {
         this.svc = svc;
+        this.adminConfig = adminConfig;
     }
 
-    // Return list of all quizzes for the admin panel
+    // Login
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Map<String, String> body) {
+
+        String username = body.get("username");
+        String password = body.get("password");
+
+        if (adminConfig.getAdminUsername().equals(username) &&
+                adminConfig.getAdminPassword().equals(password)) {
+
+            return ResponseEntity.ok("OK");
+        }
+
+        return new ResponseEntity<>("Access Denied", HttpStatus.UNAUTHORIZED);
+    }
+
+    // List all quizzes for admin dashboard
     @GetMapping("/quizzes")
-    public List<Map<String, Object>> adminQuizList() {
+    public Object adminQuizList() {
         return svc.adminQuizList();
     }
 
-    // Create a new quiz with the given title
+    // Create a new quiz
     @PostMapping("/quizzes")
     @ResponseStatus(HttpStatus.CREATED)
-    public Object createQuiz(@RequestBody Map<String, String> body) {
-        return svc.createQuiz(body.get("title"));
+    public Object createQuiz(@RequestBody CreateQuizRequest req) {
+        return svc.createQuiz(req.getTitle());
     }
 
-    // Fetch quiz details (questions, choices) for editing
+    // View a quiz with all its questions/choices
     @GetMapping("/quizzes/{id}")
-    public Object adminQuiz(@PathVariable("id") Long id) {
+    public Object adminQuiz(@PathVariable Long id) {
         return svc.adminQuiz(id);
     }
 
     // Rename an existing quiz
     @PatchMapping("/quizzes/{id}")
-    public Object renameQuiz(@PathVariable("id") Long id,
-                             @RequestBody Map<String, String> body) {
-        return svc.renameQuiz(id, body.get("title"));
+    public Object renameQuiz(@PathVariable Long id,
+                             @RequestBody RenameQuizRequest req) {
+        return svc.renameQuiz(id, req.getTitle());
     }
 
     // Delete a quiz
     @DeleteMapping("/quizzes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteQuiz(@PathVariable("id") Long id) {
+    public void deleteQuiz(@PathVariable Long id) {
         svc.deleteQuiz(id);
     }
+
 
     // Add a question to a quiz
     @PostMapping("/quizzes/{quizId}/questions")
     @ResponseStatus(HttpStatus.CREATED)
-    public Object addQuestion(@PathVariable("quizId") Long quizId,
-                              @RequestBody Map<String, Object> body) {
+    public Object addQuestion(@PathVariable Long quizId,
+                              @RequestBody AddQuestionRequest req) {
 
-        QuestionType type = QuestionType.valueOf(((String) body.get("type")).toUpperCase());
-        String text = (String) body.get("text");
-        Boolean tf = (Boolean) body.get("correctTrueFalse");
-        String st = (String) body.get("correctShortText");
-
-        return svc.addQuestion(quizId, type, text, tf, st);
+        return svc.addQuestion(
+                quizId,
+                req.getType(),
+                req.getText(),
+                req.getCorrectTrueFalse(),
+                req.getCorrectShortText()
+        );
     }
 
-    // Update a question’s text, type, or correct answer
+    // Update question text/type/correct answers
     @PatchMapping("/questions/{id}")
-    public Object updateQuestion(@PathVariable("id") Long id,
-                                 @RequestBody Map<String, Object> body) {
+    public Object updateQuestion(@PathVariable Long id,
+                                 @RequestBody UpdateQuestionRequest req) {
 
-        String text = (String) body.get("text");
-        QuestionType type = body.get("type") == null ? null :
-                QuestionType.valueOf(((String) body.get("type")).toUpperCase());
-        Boolean tf = (Boolean) body.get("correctTrueFalse");
-        String st = (String) body.get("correctShortText");
-
-        return svc.updateQuestion(id, text, type, tf, st);
+        return svc.updateQuestion(
+                id,
+                req.getText(),
+                req.getType(),
+                req.getCorrectTrueFalse(),
+                req.getCorrectShortText()
+        );
     }
 
     // Delete a question
     @DeleteMapping("/questions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteQuestion(@PathVariable("id") Long id) {
+    public void deleteQuestion(@PathVariable Long id) {
         svc.removeQuestion(id);
     }
 
-    // Add a choice option to a multiple-choice question
+    // Add a choice to a question
     @PostMapping("/questions/{questionId}/choices")
     @ResponseStatus(HttpStatus.CREATED)
-    public Object addChoice(@PathVariable("questionId") Long qid,
-                            @RequestBody Map<String, Object> body) {
+    public Object addChoice(@PathVariable Long questionId,
+                            @RequestBody AddChoiceRequest req) {
 
-        String text = (String) body.get("text");
-        boolean correct = body.get("correct") != null && (Boolean) body.get("correct");
-
-        return svc.addChoice(qid, text, correct);
+        return svc.addChoice(
+                questionId,
+                req.getText(),
+                Boolean.TRUE.equals(req.getCorrect())
+        );
     }
 
-    // Update a choice’s text or correct flag
+    // Update a choice
     @PatchMapping("/choices/{id}")
-    public Object updateChoice(@PathVariable("id") Long id,
-                               @RequestBody Map<String, Object> body) {
+    public Object updateChoice(@PathVariable Long id,
+                               @RequestBody UpdateChoiceRequest req) {
 
-        String text = (String) body.get("text");
-        Boolean correct = (Boolean) body.get("correct");
-
-        return svc.updateChoice(id, text, correct);
+        return svc.updateChoice(
+                id,
+                req.getText(),
+                req.getCorrect()
+        );
     }
 
-    // Delete a choice option
+    // Delete a choice
     @DeleteMapping("/choices/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteChoice(@PathVariable("id") Long id) {
+    public void deleteChoice(@PathVariable Long id) {
         svc.removeChoice(id);
     }
 }

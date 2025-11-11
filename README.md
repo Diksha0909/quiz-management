@@ -32,5 +32,5 @@ The application provides separate interfaces for **Admin** (quiz creation & mana
 - **Spring Data JPA + Hibernate**
 - **MySQL**
 - **HTML, CSS, JavaScript (Fetch API)**
-- **Docker + Docker Compose (optional)**
+- **Docker + Docker Compose**
 

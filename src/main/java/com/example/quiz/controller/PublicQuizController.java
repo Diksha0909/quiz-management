@@ -1,8 +1,10 @@
 package com.example.quiz.controller;
 
+import com.example.quiz.dto.SubmitQuizRequest;
 import com.example.quiz.service.QuizService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,26 +18,36 @@ public class PublicQuizController {
         this.svc = svc;
     }
 
-    // Return list of quizzes available for the public to take
+    // List public quizzes
     @GetMapping("/quizzes")
     public List<Map<String, Object>> publicQuizzes() {
         return svc.publicQuizzes();
     }
 
-    // Fetch a single quiz with its questions for taking
+    // Get quiz by id for public taking
     @GetMapping("/quizzes/{id}")
-    public Map<String, Object> publicQuiz(@PathVariable("id") Long id) {
+    public Map<String, Object> publicQuiz(@PathVariable Long id) {
         return svc.publicQuiz(id);
     }
 
-    // Submit quiz answers and return evaluation (score or correctness)
+    // Submit answers
     @PostMapping("/quizzes/{id}/submit")
-    public Map<String, Object> submit(@PathVariable("id") Long id,
-                                      @RequestBody Map<String, Object> body) {
+    public Map<String, Object> submit(@PathVariable Long id,
+                                      @RequestBody SubmitQuizRequest body) {
 
-        List<Map<String, Object>> answers =
-                (List<Map<String, Object>>) body.get("answers");
+        // Convert DTOs → List<Map<String,Object>>
+        List<Map<String, Object>> answerMaps = body.getAnswers().stream()
+                .map(a -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("questionId", a.getQuestionId());
+                    m.put("choiceId", a.getChoiceId());
+                    m.put("value", a.getValue());
+                    m.put("text", a.getText());
+                    return m;
+                })
+                .toList();
 
-        return svc.submit(id, answers);
+        return svc.submit(id, answerMaps);
     }
+
 }

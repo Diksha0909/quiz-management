@@ -19,13 +19,13 @@ public class QuizService {
     private final SubmissionRepository submissionRepo;
     private final AnswerRepository answerRepo;
 
-    public QuizService(QuizRepository a, QuestionRepository b, ChoiceRepository c,
-                       SubmissionRepository d, AnswerRepository e) {
-        this.quizRepo = a;
-        this.questionRepo = b;
-        this.choiceRepo = c;
-        this.submissionRepo = d;
-        this.answerRepo = e;
+    public QuizService(QuizRepository quizRepo, QuestionRepository questionRepo, ChoiceRepository choiceRepo,
+                       SubmissionRepository submissionRepo, AnswerRepository ansRepo) {
+        this.quizRepo = quizRepo;
+        this.questionRepo = questionRepo;
+        this.choiceRepo = choiceRepo;
+        this.submissionRepo = submissionRepo;
+        this.answerRepo = ansRepo;
     }
 
     public List<Quiz> allQuizzes() {

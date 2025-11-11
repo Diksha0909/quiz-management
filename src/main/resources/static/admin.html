@@ -1,5 +1,41 @@
-<!doctype html><html lang='en'><head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width, initial-scale=1.0'/><title>Quiz Admin</title><link rel='stylesheet' href='/css/style.css'/></head><body>
+<!doctype html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+    <title>Quiz Admin</title>
+    <link rel='stylesheet' href='/css/style.css'/>
+</head>
+
+<body>
+
+<!-- ✅ Silent redirect, no popup -->
+<script>
+    if (sessionStorage.getItem("admin") !== "true") {
+        window.location.replace("/admin-login.html");
+    }
+</script>
+
 <h1>🛠️ Admin — Quizzes</h1>
-<div class='card'><h2>Create Quiz</h2><div class='row'><input id='quiz-title' placeholder='Quiz title'/><button class='primary' id='btn-create-quiz'>Create</button></div></div>
-<div class='card'><h2>Existing Quizzes</h2><table><thead><tr><th>ID</th><th>Title</th><th>Actions</th></tr></thead><tbody id='quiz-table'></tbody></table></div>
-<script src='/js/admin.js'></script></body></html>
+
+<div class='card'>
+    <h2>Create Quiz</h2>
+    <div class='row'>
+        <input id='quiz-title' placeholder='Quiz title'/>
+        <button class='primary' id='btn-create-quiz'>Create</button>
+    </div>
+</div>
+
+<div class='card'>
+    <h2>Existing Quizzes</h2>
+    <table>
+        <thead>
+        <tr><th>Title</th><th>Actions</th></tr>
+        </thead>
+        <tbody id='quiz-table'></tbody>
+    </table>
+</div>
+
+<script src='/js/admin.js'></script>
+</body>
+</html>
