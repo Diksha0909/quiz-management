@@ -2,9 +2,19 @@ package com.example.quiz.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "choices")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"question"})
 public class Choice {
 
  @Id
@@ -17,18 +27,6 @@ public class Choice {
  private Question question;
 
  private String text;
+
  private boolean correct;
-
- // Getters / Setters
- public Long getId() { return id; }
- public void setId(Long id) { this.id = id; }
-
- public Question getQuestion() { return question; }
- public void setQuestion(Question question) { this.question = question; }
-
- public String getText() { return text; }
- public void setText(String text) { this.text = text; }
-
- public boolean isCorrect() { return correct; }
- public void setCorrect(boolean correct) { this.correct = correct; }
 }

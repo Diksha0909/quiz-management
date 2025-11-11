@@ -18,39 +18,40 @@ public class AdminQuizController {
         this.svc = svc;
     }
 
-    // ================= QUIZ =================
-
+    // Return list of all quizzes for the admin panel
     @GetMapping("/quizzes")
     public List<Map<String, Object>> adminQuizList() {
         return svc.adminQuizList();
     }
 
+    // Create a new quiz with the given title
     @PostMapping("/quizzes")
     @ResponseStatus(HttpStatus.CREATED)
     public Object createQuiz(@RequestBody Map<String, String> body) {
         return svc.createQuiz(body.get("title"));
     }
 
+    // Fetch quiz details (questions, choices) for editing
     @GetMapping("/quizzes/{id}")
     public Object adminQuiz(@PathVariable("id") Long id) {
         return svc.adminQuiz(id);
     }
 
+    // Rename an existing quiz
     @PatchMapping("/quizzes/{id}")
     public Object renameQuiz(@PathVariable("id") Long id,
                              @RequestBody Map<String, String> body) {
         return svc.renameQuiz(id, body.get("title"));
     }
 
+    // Delete a quiz
     @DeleteMapping("/quizzes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteQuiz(@PathVariable("id") Long id) {
         svc.deleteQuiz(id);
     }
 
-
-    // ================= QUESTIONS =================
-
+    // Add a question to a quiz
     @PostMapping("/quizzes/{quizId}/questions")
     @ResponseStatus(HttpStatus.CREATED)
     public Object addQuestion(@PathVariable("quizId") Long quizId,
@@ -64,6 +65,7 @@ public class AdminQuizController {
         return svc.addQuestion(quizId, type, text, tf, st);
     }
 
+    // Update a question’s text, type, or correct answer
     @PatchMapping("/questions/{id}")
     public Object updateQuestion(@PathVariable("id") Long id,
                                  @RequestBody Map<String, Object> body) {
@@ -77,15 +79,14 @@ public class AdminQuizController {
         return svc.updateQuestion(id, text, type, tf, st);
     }
 
+    // Delete a question
     @DeleteMapping("/questions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteQuestion(@PathVariable("id") Long id) {
         svc.removeQuestion(id);
     }
 
-
-    // ================= CHOICES =================
-
+    // Add a choice option to a multiple-choice question
     @PostMapping("/questions/{questionId}/choices")
     @ResponseStatus(HttpStatus.CREATED)
     public Object addChoice(@PathVariable("questionId") Long qid,
@@ -97,6 +98,7 @@ public class AdminQuizController {
         return svc.addChoice(qid, text, correct);
     }
 
+    // Update a choice’s text or correct flag
     @PatchMapping("/choices/{id}")
     public Object updateChoice(@PathVariable("id") Long id,
                                @RequestBody Map<String, Object> body) {
@@ -107,6 +109,7 @@ public class AdminQuizController {
         return svc.updateChoice(id, text, correct);
     }
 
+    // Delete a choice option
     @DeleteMapping("/choices/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteChoice(@PathVariable("id") Long id) {

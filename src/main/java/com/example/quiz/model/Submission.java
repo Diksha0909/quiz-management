@@ -2,10 +2,22 @@ package com.example.quiz.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "submissions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"quiz", "answers"})
 public class Submission {
 
  @Id
@@ -20,23 +32,6 @@ public class Submission {
  private int score;
  private int total;
 
- // ✅ All answers for this submission delete automatically
  @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
  private List<Answer> answers = new ArrayList<>();
-
- // Getters / Setters
- public Long getId() { return id; }
- public void setId(Long id) { this.id = id; }
-
- public Quiz getQuiz() { return quiz; }
- public void setQuiz(Quiz quiz) { this.quiz = quiz; }
-
- public int getScore() { return score; }
- public void setScore(int score) { this.score = score; }
-
- public int getTotal() { return total; }
- public void setTotal(int total) { this.total = total; }
-
- public List<Answer> getAnswers() { return answers; }
- public void setAnswers(List<Answer> answers) { this.answers = answers; }
 }

@@ -2,16 +2,25 @@ package com.example.quiz.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "answers")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"submission", "question"})
 public class Answer {
 
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id;
 
- // ✅ Prevent recursion
  @ManyToOne(fetch = FetchType.LAZY)
  @JoinColumn(name = "submission_id")
  @JsonIgnore
@@ -26,26 +35,4 @@ public class Answer {
  private Boolean chosenTrueFalse;
  private String shortText;
  private boolean correct;
-
- // Getters / Setters
- public Long getId() { return id; }
- public void setId(Long id) { this.id = id; }
-
- public Submission getSubmission() { return submission; }
- public void setSubmission(Submission submission) { this.submission = submission; }
-
- public Question getQuestion() { return question; }
- public void setQuestion(Question question) { this.question = question; }
-
- public Long getChosenChoiceId() { return chosenChoiceId; }
- public void setChosenChoiceId(Long chosenChoiceId) { this.chosenChoiceId = chosenChoiceId; }
-
- public Boolean getChosenTrueFalse() { return chosenTrueFalse; }
- public void setChosenTrueFalse(Boolean chosenTrueFalse) { this.chosenTrueFalse = chosenTrueFalse; }
-
- public String getShortText() { return shortText; }
- public void setShortText(String shortText) { this.shortText = shortText; }
-
- public boolean isCorrect() { return correct; }
- public void setCorrect(boolean correct) { this.correct = correct; }
 }

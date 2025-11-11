@@ -16,16 +16,19 @@ public class PublicQuizController {
         this.svc = svc;
     }
 
+    // Return list of quizzes available for the public to take
     @GetMapping("/quizzes")
     public List<Map<String, Object>> publicQuizzes() {
         return svc.publicQuizzes();
     }
 
+    // Fetch a single quiz with its questions for taking
     @GetMapping("/quizzes/{id}")
     public Map<String, Object> publicQuiz(@PathVariable("id") Long id) {
         return svc.publicQuiz(id);
     }
 
+    // Submit quiz answers and return evaluation (score or correctness)
     @PostMapping("/quizzes/{id}/submit")
     public Map<String, Object> submit(@PathVariable("id") Long id,
                                       @RequestBody Map<String, Object> body) {
